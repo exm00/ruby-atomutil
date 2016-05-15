@@ -754,14 +754,14 @@ module Atom
 
     def body=(value)
 
-      if value =~ Regexp.new("^(?:
-        [[:print:]]
-        |[\xc0-\xdf][\x80-\xbf]
-        |[\xe0-\xef][\x80-\xbf]{2}
-        |[\xf0-\xf7][\x80-\xbf]{3}
-        |[\xf8-\xfb][\x80-\xbf]{4}
-        |[\xfc-\xfd][\x80-\xbf]{5}
-        )*$", Regexp::EXTENDED, 'n')
+      # if value =~ Regexp.new("^(?:
+      #   [[:print:]]
+      #   |[\xc0-\xdf][\x80-\xbf]
+      #   |[\xe0-\xef][\x80-\xbf]{2}
+      #   |[\xf0-\xf7][\x80-\xbf]{3}
+      #   |[\xf8-\xfb][\x80-\xbf]{4}
+      #   |[\xfc-\xfd][\x80-\xbf]{5}
+      #   )*$", Regexp::EXTENDED, 'n')
       #if value =~ /^(?:
       #   [[:print:]]
       #  |[\xc0-\xdf][\x80-\xbf]
@@ -770,6 +770,7 @@ module Atom
       #  |[\xf8-\xfb][\x80-\xbf]{4}
       #  |[\xfc-\xfd][\x80-\xbf]{5}
       #  )*$/x
+      if true
         copy = "<div xmlns=\"http://www.w3.org/1999/xhtml\">#{value}</div>"  
         is_valid = true
         begin
@@ -1410,7 +1411,7 @@ module Atompub
     def get_media(media_uri)
       get_resource(media_uri)
       if @rc.instance_of?(Atom::Entry)
-        raise ResponseError, "Response is not Media Resource"
+        # raise ResponseError, "Response is not Media Resource"
       end
       return @rc, @res.content_type
     end
@@ -1444,8 +1445,7 @@ module Atompub
     #   media_uri = client.create_media(post_media_uri, 'myimage.jpg', 'image/jpeg')
     #
     def create_media(media_uri, file_path, content_type, slug=nil)
-      file_path = Pathname.new(file_path) unless file_path.is_a?(Pathname)
-      stream = file_path.open { |f| f.binmode; f.read }
+      stream = open(file_path) { |f| f.binmode; f.read }
       service = @service_info.get(media_uri)
       if service.nil?
         raise RequestError, "Service information not found. Get service document before you do create_media."
@@ -1738,4 +1738,5 @@ module Atompub
   end
 
 end
+
 
